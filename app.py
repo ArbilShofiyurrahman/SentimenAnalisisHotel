@@ -3,7 +3,7 @@ import pandas as pd
 import re
 import joblib
 import matplotlib.pyplot as plt
-import numpy as np
+import numpy as np 
 from io import BytesIO
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
