@@ -3,7 +3,7 @@ import pandas as pd
 import re
 import joblib
 import matplotlib.pyplot as plt
-import numpy as np 
+import numpy as np
 from io import BytesIO
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
@@ -14,21 +14,7 @@ stemmer = stemmer_factory.create_stemmer()
 stopword_factory = StopWordRemoverFactory()
 stopword_remover = stopword_factory.create_stop_word_remover()
 
-# Fungsi untuk membersihkan teks
-def clean_text(text):
-    text = re.sub(r'[^a-zA-Z\s]', '', text)  # Menghapus angka dan karakter non-huruf
-    return text
 
-# Load normalization dictionary from Excel
-@st.cache_data
-def load_normalization_dict():
-    try:
-        normalized_word = pd.read_excel("kamus perbaikan.xlsx")
-        return {str(row['TIDAK BAKU']).strip(): str(row['BAKU']).strip() 
-                for _, row in normalized_word.iterrows()}
-    except Exception as e:
-        st.error(f"Error loading normalization dictionary: {e}")
-        return {}
 
 # Fungsi untuk membersihkan teks
 def clean_text(text):
