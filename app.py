@@ -363,11 +363,11 @@ def main():
     """)
 
     # Menyediakan menu/tab untuk input teks atau file
-    tab1, tab2 = st.tabs(["Input Teks", "Upload File"])
+    tab1, tab2 = st.tabs(["Input Ulasan", "Upload File"])
 
     with tab1:
-        st.subheader("Input Teks Tunggal")
-        user_input = st.text_area("Masukkan Teks", placeholder="kamar tidak jelek dan rapi")
+        st.subheader("Input Ulasan Hotel")
+        user_input = st.text_area("Masukkan Ulasan", placeholder="kamar tidak jelek dan rapi")
         if st.button("Prediksi Teks"):
             if not user_input:
                 st.warning("Masukkan teks terlebih dahulu.")
@@ -388,8 +388,8 @@ def main():
                     st.write(f"Aspek: {predicted_aspect.capitalize()}")
                     st.write(f"Sentimen: {predicted_sentiment}")
     with tab2:
-        st.subheader("Input File, Pastikan Terdapat Kolom (ulasan)")
-        uploaded_file = st.file_uploader("Upload file CSV atau Excel", type=["csv", "xlsx"])
+        st.subheader("Pastikan Terdapat Kolom (ulasan)")
+        uploaded_file = st.file_uploader("Upload File CSV atau Excel", type=["csv", "xlsx"])
         
         if uploaded_file is not None:
             try:
@@ -436,7 +436,7 @@ def main():
                             df.at[index, "Sentimen"] = predicted_sentiment
     
                     # Tampilkan informasi jumlah data yang diproses
-                    st.subheader("Visualisasi Sentimen per Aspek")
+                    st.subheader("Visualisasi Sentimen Pada Setiap Aspek")
                     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
                     aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
                     colors = ["#4DA6FF", "#FF4D4D"]  # Warna biru untuk positif, merah untuk negatif
@@ -490,8 +490,8 @@ def main():
     # Footer
     st.markdown("---")
     st.caption("""
-    © 2025 Sistem Analisis Sentimen Hotel. Dibangun dengan Streamlit.  
-    Dikembangkan oleh Arbil Shofiyurrahman.  
+    © 2025 Sistem Analisis Sentimen Hotel. by Streamlit.  
+    Arbil Shofiyurrahman.  
     Teknologi yang Digunakan: Python, Scikit-learn, TF-IDF, Random Forest.
     """)
 
