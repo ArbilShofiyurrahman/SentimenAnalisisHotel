@@ -38,7 +38,7 @@ def preprocess_text(text):
     text = clean_text(text)
     
     # Normalisasi
-    text = normalize_text(text)
+    text = normalize_text(text, kamus)
     
     # Stopword Removal
     text = stopword_remover.remove(text)
