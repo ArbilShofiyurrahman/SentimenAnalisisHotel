@@ -204,22 +204,40 @@ def main():
                     # Tampilkan informasi jumlah data yang diproses
                     st.info(f"Total data setelah menghapus ulasan kosong: {len(df)} baris")
     
-                    # Visualisasi Pie Chart
-                    st.subheader("Visualisasi Sentimen per Aspek")
-                    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-                    aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
-                    colors = ["#66b3ff", "#ff9999"]
-    
-                    for i, aspek in enumerate(aspek_list):
-                        data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
-                        if not data.empty:
-                            axes[i].pie(data, labels=data.index, autopct='%1.1f%%', colors=colors, startangle=140)
-                            axes[i].set_title(f"Aspek {aspek}")
-                        else:
-                            axes[i].pie([1], labels=["Tidak Ada Data"], colors=["#d3d3d3"])
-                            axes[i].set_title(f"Aspek {aspek}")
-    
-                    st.pyplot(fig)
+                   # Visualisasi Distribusi Aspek
+                    st.subheader("Distribusi Prediksi Aspek terhadap Total Data")
+                    aspek_counts = df['Aspek'].value_counts()
+                    fig1, ax1 = plt.subplots(figsize=(8, 6))
+                    colors_aspek = ["#66b3ff", "#ff9999", "#99ff99"]
+                    
+                    ax1.pie(
+                        aspek_counts, 
+                        labels=aspek_counts.index, 
+                        autopct='%1.1f%%', 
+                        colors=colors_aspek, 
+                        startangle=140
+                    )
+                    ax1.set_title("Distribusi Prediksi Aspek")
+                    
+                    st.pyplot(fig1)
+                    
+                    # Visualisasi Distribusi Sentimen
+                    st.subheader("Distribusi Sentimen terhadap Total Data")
+                    sentimen_counts = df['Sentimen'].value_counts()
+                    fig2, ax2 = plt.subplots(figsize=(8, 6))
+                    colors_sentimen = ["#66ff66", "#ff6666"]
+                    
+                    ax2.pie(
+                        sentimen_counts, 
+                        labels=sentimen_counts.index, 
+                        autopct='%1.1f%%', 
+                        colors=colors_sentimen, 
+                        startangle=140
+                    )
+                    ax2.set_title("Distribusi Sentimen")
+                    
+                    st.pyplot(fig2)
+
     
                     # Menampilkan DataFrame hasil prediksi
                     st.subheader("Hasil Analisis")
