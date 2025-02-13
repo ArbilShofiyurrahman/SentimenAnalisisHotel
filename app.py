@@ -60,7 +60,7 @@ try:
     tfidf_masakan = joblib.load('tfidfMasakan.joblib')
 
     rf_aspek_model = joblib.load('RandomForestAspekModel.joblib')
-    rf_fasilitas_model = joblib.load('RandomForestFasilitasModel.joblib')
+    rf_fasilitas_model = joblib.load('RandomForestFasilitas.joblib')
     rf_pelayanan_model = joblib.load('RandomForestPelayananModel.joblib')
     rf_masakan_model = joblib.load('RandomForestMasakanModel.joblib')
 except Exception as e:
