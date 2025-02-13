@@ -437,30 +437,19 @@ def main():
     
                     # Tampilkan informasi jumlah data yang diproses
                     st.subheader("Visualisasi Sentimen per Aspek")
-                    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+                    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
                     aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
-                    colors = ["#4DA6FF", "#FF4D4D"]  # Biru untuk positif, merah untuk negatif
-                    
+                    colors = ["#66b3ff", "#ff9999"]
+    
                     for i, aspek in enumerate(aspek_list):
                         data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
-                        total_data_aspek = data.sum()
-                        
                         if not data.empty:
-                            percentages = [f"{count / total_data_aspek * 100:.1f}% ({count} data)" for count in data]
-                            labels = [f"{label} ({percent})" for label, percent in zip(data.index, percentages)]
-                            
-                            axes[i].pie(
-                                data, 
-                                labels=labels, 
-                                colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index], 
-                                autopct=None, 
-                                startangle=140
-                            )
+                            axes[i].pie(data, labels=data.index, autopct='%1.1f%%', colors=colors, startangle=140)
                             axes[i].set_title(f"Aspek {aspek}")
                         else:
                             axes[i].pie([1], labels=["Tidak Ada Data"], colors=["#d3d3d3"])
                             axes[i].set_title(f"Aspek {aspek}")
-                    
+    
                     st.pyplot(fig)
 
 
