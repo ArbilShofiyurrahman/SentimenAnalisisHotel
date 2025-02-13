@@ -19,7 +19,7 @@ def clean_text(text):
     text = re.sub(r'[^a-zA-Z\s]', '', text)  # Menghapus angka dan karakter non-huruf
     return text
 
-kamus_perbaikan = pd.read_excel("kamus perbaikan.xlsx")
+kamus = pd.read_excel("kamus perbaikan.xlsx")
 # Fungsi Normalisasi dengan nama kolom TIDAK BAKU dan BAKU
 def normalize_text(text, kamus):
     for _, row in kamus.iterrows():
