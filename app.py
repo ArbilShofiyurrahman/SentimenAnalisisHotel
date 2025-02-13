@@ -446,23 +446,22 @@ def main():
                     
                     for i, aspek in enumerate(aspek_list):
                         data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
-                        total_data_aspek = len(df[df['Aspek'] == aspek])
+                        total_data_aspek = data.sum()
                         if not data.empty:
+                            percentages = [f"{count / total_data_aspek * 100:.1f}% ({count} data)" for count in data]
                             wedges, texts, autotexts = axes[i].pie(
                                 data, 
-                                labels=data.index, 
-                                autopct='%1.1f%%', 
+                                labels=[f"{label} ({percent})" for label, percent in zip(data.index, percentages)], 
                                 colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index], 
                                 startangle=140
                             )
-                            # Tambahkan teks di bawah pie chart
-                            axes[i].text(0, -1.2, f"Total data: {total_data_aspek}", ha='center', fontsize=10, color='black')
                             axes[i].set_title(f"Aspek {aspek}")
                         else:
                             axes[i].pie([1], labels=["Tidak Ada Data"], colors=["#d3d3d3"])
                             axes[i].set_title(f"Aspek {aspek}")
                     
                     st.pyplot(fig)
+
 
     
                     # Menampilkan DataFrame hasil prediksi
