@@ -436,23 +436,24 @@ def main():
                             df.at[index, "Sentimen"] = predicted_sentiment
     
                     # Tampilkan informasi jumlah data yang diproses
-                    st.info(f"Total data setelah menghapus ulasan kosong: {len(df)} baris")
-    
-                    # Visualisasi Pie Chart
                     st.subheader("Visualisasi Sentimen per Aspek")
                     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
                     aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
-                    colors = ["#4DA6FF", "#FF4D4D"]  # Warna biru untuk positif, merah untuk negatif
+                    colors = ["#4DA6FF", "#FF4D4D"]  # Biru untuk positif, merah untuk negatif
                     
                     for i, aspek in enumerate(aspek_list):
                         data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
                         total_data_aspek = data.sum()
+                        
                         if not data.empty:
                             percentages = [f"{count / total_data_aspek * 100:.1f}% ({count} data)" for count in data]
-                            wedges, texts, autotexts = axes[i].pie(
+                            labels = [f"{label} ({percent})" for label, percent in zip(data.index, percentages)]
+                            
+                            axes[i].pie(
                                 data, 
-                                labels=[f"{label} ({percent})" for label, percent in zip(data.index, percentages)], 
+                                labels=labels, 
                                 colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index], 
+                                autopct=None, 
                                 startangle=140
                             )
                             axes[i].set_title(f"Aspek {aspek}")
