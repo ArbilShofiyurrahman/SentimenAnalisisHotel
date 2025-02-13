@@ -14,6 +14,16 @@ stemmer = stemmer_factory.create_stemmer()
 stopword_factory = StopWordRemoverFactory()
 stopword_remover = stopword_factory.create_stop_word_remover()
 
+# Load normalization dictionary from Excel
+@st.cache_data
+def load_normalization_dict():
+    try:
+        normalized_word = pd.read_excel("kamus perbaikan.xlsx")
+        return {str(row['TIDAK BAKU']).strip(): str(row['BAKU']).strip() 
+                for _, row in normalized_word.iterrows()}
+    except Exception as e:
+        st.error(f"Error loading normalization dictionary: {e}")
+        return {}
 
 
 # Fungsi untuk membersihkan teks
