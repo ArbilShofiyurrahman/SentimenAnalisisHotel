@@ -52,6 +52,7 @@ def normalize_negation(text):
         r'\btidak wangi\b': 'bau',
         r'\btidak layak\b': 'tidaklayak',
         r'\btidak bisa\b': 'tidakbisa',
+        r'\btidak rapi\b': 'tidakrapi',
 
         # Kata negasi diawali dengan "kurang"
         r'\bkurang bersih\b': 'kotor',
