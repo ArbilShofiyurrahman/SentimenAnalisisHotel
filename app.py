@@ -18,15 +18,22 @@ stopword_remover = stopword_factory.create_stop_word_remover()
 def clean_text(text):
     text = re.sub(r'[^a-zA-Z\s]', '', text)  # Menghapus angka dan karakter non-huruf
     return text
-
-kamus = pd.read_excel("kamus perbaikan.xlsx")
 # Fungsi Normalisasi dengan nama kolom TIDAK BAKU dan BAKU
-def normalize_text(text, kamus):
-    for _, row in kamus.iterrows():
-        pattern = row['TIDAK BAKU']  # Kolom yang berisi kata/kalimat tidak baku
-        replacement = row['BAKU']  # Kolom yang berisi kata pengganti (baku)
-        text = re.sub(pattern, replacement, text)
-    return text
+normalized_word = pd.read_excel("kamus perbaikan.xlsx")
+normalized_word_dict = {
+    str(row['TIDAK BAKU']).strip(): str(row['BAKU']).strip()
+    for _, row in normalized_word.iterrows()
+    if pd.notna(row['TIDAK BAKU']) and pd.notna(row['BAKU'])  # Pastikan tidak ada nilai NaN
+}
+def normalize_term(document):
+    if pd.isna(document):  # Jika nilai NaN, langsung kembalikan nilai asli
+        return document
+    document = str(document)  # Pastikan document adalah string
+    for term, replacement in normalized_word_dict.items():
+        if term:  # Pastikan term tidak kosong
+            pattern = r'\b' + re.escape(term) + r'\b'  # Mencocokkan kata/frase secara utuh
+            document = re.sub(pattern, replacement, document, flags=re.IGNORECASE)
+    return document
 
 
 # Fungsi Preprocessing
@@ -38,7 +45,7 @@ def preprocess_text(text):
     text = clean_text(text)
     
     # Normalisasi
-    text = normalize_text(text, kamus)
+    text = normalize_text(document)
     
     # Stopword Removal
     text = stopword_remover.remove(text)
