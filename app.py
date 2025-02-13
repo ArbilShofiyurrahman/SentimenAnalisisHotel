@@ -439,7 +439,7 @@ def main():
                     st.info(f"Total data setelah menghapus ulasan kosong: {len(df)} baris")
     
                     # Visualisasi Pie Chart
-                   st.subheader("Visualisasi Sentimen per Aspek")
+                    st.subheader("Visualisasi Sentimen per Aspek")
                     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
                     aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
                     colors = ["#4DA6FF", "#FF4D4D"]  # Warna biru untuk positif, merah untuk negatif
