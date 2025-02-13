@@ -23,8 +23,10 @@ normalized_word = pd.read_excel("kamus perbaikan.xlsx")
 normalized_word_dict = {
     str(row['TIDAK BAKU']).strip(): str(row['BAKU']).strip()
     for _, row in normalized_word.iterrows()
-    if pd.notna(row['TIDAK BAKU']) and pd.notna(row['BAKU'])  # Pastikan tidak ada nilai NaN
+    if pd.notna(row['TIDAK BAKU']) and pd.notna(row['BAKU'])
 }
+
+# Fungsi normalisasi teks
 def normalize_term(document):
     if pd.isna(document):  # Jika nilai NaN, langsung kembalikan nilai asli
         return document
@@ -32,8 +34,7 @@ def normalize_term(document):
     for term, replacement in normalized_word_dict.items():
         if term:  # Pastikan term tidak kosong
             pattern = r'\b' + re.escape(term) + r'\b'  # Mencocokkan kata/frase secara utuh
-            document = re.sub(pattern, replacement, document, flags=re.IGNORECASE)
-    return document
+            document 
 
 
 # Fungsi Preprocessing
@@ -45,7 +46,7 @@ def preprocess_text(text):
     text = clean_text(text)
     
     # Normalisasi
-    text = normalize_text(document)
+    text = normalize_term(text)
     
     # Stopword Removal
     text = stopword_remover.remove(text)
