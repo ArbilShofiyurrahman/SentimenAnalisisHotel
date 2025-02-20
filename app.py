@@ -336,10 +336,7 @@ def predict_sentiment(text, aspect):
     else:
         return "-"
     
-    # Transform text and predict
-    text_vectorized = vectorizer.transform([text])
-    sentiment = model.predict(text_vectorized)[0]
-    return sentiment.capitalize()
+   
 
 def main():
     # Deskripsi Aplikasi
