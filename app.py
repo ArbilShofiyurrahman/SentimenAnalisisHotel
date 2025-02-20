@@ -386,104 +386,104 @@ def main():
                     st.write(f"Aspek: {predicted_aspect.capitalize()}")
                     st.write(f"Sentimen: {predicted_sentiment}")
     
-with tab2:
-    st.subheader("Pastikan Terdapat Kolom 'ulasan'")
-    uploaded_file = st.file_uploader("Upload File CSV atau Excel", type=["csv", "xlsx"])
-
-    if uploaded_file is not None:
-        try:
-            df = pd.read_csv(uploaded_file) if uploaded_file.name.endswith(".csv") else pd.read_excel(uploaded_file)
-
-            if 'ulasan' not in df.columns:
-                st.error("File harus memiliki kolom 'ulasan'.")
-            else:
-                df = df.dropna(subset=['ulasan'])
-                df = df[df['ulasan'].str.strip() != ''].reset_index(drop=True)
-
-                # Buat kolom tambahan
-                df["Ulasan_Preprocessed"] = ""
-                df["Aspek"] = ""
-                df["Sentimen"] = ""
-
-                for index, row in df.iterrows():
-                    ulasan = str(row['ulasan'])
-                    processed_text = preprocess_text(ulasan)
-
-                    # Simpan hasil preprocessing
-                    df.at[index, "Ulasan_Preprocessed"] = processed_text
-
-                    # Prediksi Aspek
-                    aspect_vectorized = tfidf_aspek.transform([processed_text])
-                    predicted_aspect = rf_aspek_model.predict(aspect_vectorized)[0]
-
-                    if predicted_aspect == "tidak_dikenali":
-                        df.at[index, "Aspek"] = "Tidak Dikenali"
-                        df.at[index, "Sentimen"] = "-"
-                    else:
-                        df.at[index, "Aspek"] = predicted_aspect.capitalize()
-
-                        # Prediksi Sentimen berdasarkan aspek
-                        if predicted_aspect == "fasilitas":
-                            sentiment_vectorized = tfidf_fasilitas.transform([processed_text])
-                            predicted_sentiment = rf_fasilitas_model.predict(sentiment_vectorized)[0]
-                        elif predicted_aspect == "pelayanan":
-                            sentiment_vectorized = tfidf_pelayanan.transform([processed_text])
-                            predicted_sentiment = rf_pelayanan_model.predict(sentiment_vectorized)[0]
-                        elif predicted_aspect == "masakan":
-                            sentiment_vectorized = tfidf_masakan.transform([processed_text])
-                            predicted_sentiment = rf_masakan_model.predict(sentiment_vectorized)[0]
+    with tab2:
+        st.subheader("Pastikan Terdapat Kolom 'ulasan'")
+        uploaded_file = st.file_uploader("Upload File CSV atau Excel", type=["csv", "xlsx"])
+    
+        if uploaded_file is not None:
+            try:
+                df = pd.read_csv(uploaded_file) if uploaded_file.name.endswith(".csv") else pd.read_excel(uploaded_file)
+    
+                if 'ulasan' not in df.columns:
+                    st.error("File harus memiliki kolom 'ulasan'.")
+                else:
+                    df = df.dropna(subset=['ulasan'])
+                    df = df[df['ulasan'].str.strip() != ''].reset_index(drop=True)
+    
+                    # Buat kolom tambahan
+                    df["Ulasan_Preprocessed"] = ""
+                    df["Aspek"] = ""
+                    df["Sentimen"] = ""
+    
+                    for index, row in df.iterrows():
+                        ulasan = str(row['ulasan'])
+                        processed_text = preprocess_text(ulasan)
+    
+                        # Simpan hasil preprocessing
+                        df.at[index, "Ulasan_Preprocessed"] = processed_text
+    
+                        # Prediksi Aspek
+                        aspect_vectorized = tfidf_aspek.transform([processed_text])
+                        predicted_aspect = rf_aspek_model.predict(aspect_vectorized)[0]
+    
+                        if predicted_aspect == "tidak_dikenali":
+                            df.at[index, "Aspek"] = "Tidak Dikenali"
+                            df.at[index, "Sentimen"] = "-"
                         else:
-                            predicted_sentiment = "-"
-
-                        df.at[index, "Sentimen"] = predicted_sentiment
-
-                # Menampilkan Dataframe sebelum dan sesudah preprocessing
-                st.subheader("Data Asli dan Hasil Preprocessing")
-                st.dataframe(df[["ulasan", "Ulasan_Preprocessed"]])
-
-                # Menampilkan hasil analisis
-                st.subheader("Hasil Analisis Aspek & Sentimen")
-                st.dataframe(df[["ulasan", "Ulasan_Preprocessed", "Aspek", "Sentimen"]])
-
-                # Visualisasi Sentimen
-                st.subheader("Visualisasi Sentimen Pada Setiap Aspek")
-                fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-                aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
-                colors = ["#4DA6FF", "#FF4D4D"]
-
-                for i, aspek in enumerate(aspek_list):
-                    data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
-                    total_data_aspek = len(df[df['Aspek'] == aspek])
-
-                    if not data.empty:
-                        wedges, texts, autotexts = axes[i].pie(
-                            data, labels=data.index, autopct='%1.1f%%',
-                            colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index],
-                            startangle=140
-                        )
-                        axes[i].text(0, -1.2, f"Total data: {total_data_aspek}", ha='center', fontsize=10, color='black')
-                        axes[i].set_title(f"Aspek {aspek}")
-                    else:
-                        axes[i].pie([1], labels=["Tidak Ada Data"], colors=["#d3d3d3"])
-                        axes[i].set_title(f"Aspek {aspek}")
-
-                st.pyplot(fig)
-
-                # Download hasil analisis
-                output = BytesIO()
-                with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                    df.to_excel(writer, index=False, sheet_name='Hasil Prediksi')
-                output.seek(0)
-
-                st.download_button(
-                    label="📥 Download Hasil Lengkap (Excel)",
-                    data=output,
-                    file_name="hasil_analisis_file.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
-
-        except Exception as e:
-            st.error(f"Terjadi kesalahan saat memproses file: {e}")
+                            df.at[index, "Aspek"] = predicted_aspect.capitalize()
+    
+                            # Prediksi Sentimen berdasarkan aspek
+                            if predicted_aspect == "fasilitas":
+                                sentiment_vectorized = tfidf_fasilitas.transform([processed_text])
+                                predicted_sentiment = rf_fasilitas_model.predict(sentiment_vectorized)[0]
+                            elif predicted_aspect == "pelayanan":
+                                sentiment_vectorized = tfidf_pelayanan.transform([processed_text])
+                                predicted_sentiment = rf_pelayanan_model.predict(sentiment_vectorized)[0]
+                            elif predicted_aspect == "masakan":
+                                sentiment_vectorized = tfidf_masakan.transform([processed_text])
+                                predicted_sentiment = rf_masakan_model.predict(sentiment_vectorized)[0]
+                            else:
+                                predicted_sentiment = "-"
+    
+                            df.at[index, "Sentimen"] = predicted_sentiment
+    
+                    # Menampilkan Dataframe sebelum dan sesudah preprocessing
+                    st.subheader("Data Asli dan Hasil Preprocessing")
+                    st.dataframe(df[["ulasan", "Ulasan_Preprocessed"]])
+    
+                    # Menampilkan hasil analisis
+                    st.subheader("Hasil Analisis Aspek & Sentimen")
+                    st.dataframe(df[["ulasan", "Ulasan_Preprocessed", "Aspek", "Sentimen"]])
+    
+                    # Visualisasi Sentimen
+                    st.subheader("Visualisasi Sentimen Pada Setiap Aspek")
+                    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+                    aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
+                    colors = ["#4DA6FF", "#FF4D4D"]
+    
+                    for i, aspek in enumerate(aspek_list):
+                        data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
+                        total_data_aspek = len(df[df['Aspek'] == aspek])
+    
+                        if not data.empty:
+                            wedges, texts, autotexts = axes[i].pie(
+                                data, labels=data.index, autopct='%1.1f%%',
+                                colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index],
+                                startangle=140
+                            )
+                            axes[i].text(0, -1.2, f"Total data: {total_data_aspek}", ha='center', fontsize=10, color='black')
+                            axes[i].set_title(f"Aspek {aspek}")
+                        else:
+                            axes[i].pie([1], labels=["Tidak Ada Data"], colors=["#d3d3d3"])
+                            axes[i].set_title(f"Aspek {aspek}")
+    
+                    st.pyplot(fig)
+    
+                    # Download hasil analisis
+                    output = BytesIO()
+                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                        df.to_excel(writer, index=False, sheet_name='Hasil Prediksi')
+                    output.seek(0)
+    
+                    st.download_button(
+                        label="📥 Download Hasil Lengkap (Excel)",
+                        data=output,
+                        file_name="hasil_analisis_file.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+    
+            except Exception as e:
+                st.error(f"Terjadi kesalahan saat memproses file: {e}")
 
 
 
