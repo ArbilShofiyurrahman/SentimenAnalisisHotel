@@ -368,98 +368,79 @@ def main():
     with tab1:
         st.subheader("Input Ulasan Hotel")
         user_input = st.text_area("Masukkan Ulasan", placeholder="kamar tidak jelek dan rapi")
+    
         if st.button("Prediksi Teks"):
-            if not user_input:
+            if not user_input.strip():
                 st.warning("Masukkan teks terlebih dahulu.")
             else:
-                # Preprocess text
-                processed_text = preprocess_text(user_input)
-                
-                # Predict aspect
-                aspect_vectorized = tfidf_aspek.transform([processed_text])
+                # Prediksi Aspek
+                aspect_vectorized = tfidf_aspek.transform([user_input])
                 predicted_aspect = rf_aspek_model.predict(aspect_vectorized)[0]
-                
+    
                 if predicted_aspect == "tidak_dikenali":
                     st.write("Aspek: Tidak Dikenali")
                     st.write("Sentimen: -")
                 else:
-                    # Predict sentiment based on aspect
-                    predicted_sentiment = predict_sentiment(processed_text, predicted_aspect.capitalize())
+                    # Prediksi Sentimen
+                    predicted_sentiment = predict_sentiment(user_input, predicted_aspect.capitalize())
                     st.write(f"Aspek: {predicted_aspect.capitalize()}")
                     st.write(f"Sentimen: {predicted_sentiment}")
     with tab2:
-        st.subheader("Pastikan Terdapat Kolom (ulasan)")
+        st.subheader("Pastikan Terdapat Kolom 'ulasan'")
         uploaded_file = st.file_uploader("Upload File CSV atau Excel", type=["csv", "xlsx"])
-        
+    
         if uploaded_file is not None:
             try:
-                if uploaded_file.name.endswith(".csv"):
-                    df = pd.read_csv(uploaded_file)
-                else:
-                    df = pd.read_excel(uploaded_file)
+                df = pd.read_csv(uploaded_file) if uploaded_file.name.endswith(".csv") else pd.read_excel(uploaded_file)
     
                 if 'ulasan' not in df.columns:
                     st.error("File harus memiliki kolom 'ulasan'.")
                 else:
-                    # Hapus baris dengan ulasan kosong
                     df = df.dropna(subset=['ulasan'])
-                    # Hapus baris dengan ulasan yang hanya berisi spasi
-                    df = df[df['ulasan'].str.strip() != '']
-                    
-                    # Reset index setelah menghapus baris
-                    df = df.reset_index(drop=True)
-                    
-                    # Tambahkan kolom untuk ulasan yang telah di preprocessing
-                    df["Ulasan_Preprocessed"] = ""
+                    df = df[df['ulasan'].str.strip() != ''].reset_index(drop=True)
+    
                     df["Aspek"] = ""
                     df["Sentimen"] = ""
-                    total_rows = len(df)
     
                     for index, row in df.iterrows():
                         ulasan = str(row['ulasan'])
-                        processed_text = preprocess_text(ulasan)
-                        
-                        # Simpan ulasan yang sudah di preprocessing
-                        df.at[index, "Ulasan_Preprocessed"] = processed_text
-                        
-                        # Predict aspect
-                        aspect_vectorized = tfidf_aspek.transform([processed_text])
+                        aspect_vectorized = tfidf_aspek.transform([ulasan])
                         predicted_aspect = rf_aspek_model.predict(aspect_vectorized)[0]
     
                         if predicted_aspect == "tidak_dikenali":
                             df.at[index, "Aspek"] = "Tidak Dikenali"
                             df.at[index, "Sentimen"] = "-"
                         else:
-                            # Predict sentiment based on aspect
-                            predicted_sentiment = predict_sentiment(processed_text, predicted_aspect.capitalize())
+                            predicted_sentiment = predict_sentiment(ulasan, predicted_aspect.capitalize())
                             df.at[index, "Aspek"] = predicted_aspect.capitalize()
                             df.at[index, "Sentimen"] = predicted_sentiment
     
-                    # Tampilkan informasi jumlah data yang diproses
+                    # Visualisasi Sentimen
                     st.subheader("Visualisasi Sentimen Pada Setiap Aspek")
                     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
                     aspek_list = ["Fasilitas", "Pelayanan", "Masakan"]
-                    colors = ["#4DA6FF", "#FF4D4D"]  # Warna biru untuk positif, merah untuk negatif
-                    
+                    colors = ["#4DA6FF", "#FF4D4D"]
+    
                     for i, aspek in enumerate(aspek_list):
                         data = df[df['Aspek'] == aspek]['Sentimen'].value_counts()
                         total_data_aspek = len(df[df['Aspek'] == aspek])
+    
                         if not data.empty:
                             wedges, texts, autotexts = axes[i].pie(
-                                data, 
-                                labels=data.index, 
-                                autopct='%1.1f%%', 
-                                colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index], 
+                                data, labels=data.index, autopct='%1.1f%%',
+                                colors=[colors[0] if label.lower() == "positif" else colors[1] for label in data.index],
                                 startangle=140
                             )
-                            # Tambahkan teks di bawah pie chart
                             axes[i].text(0, -1.2, f"Total data: {total_data_aspek}", ha='center', fontsize=10, color='black')
                             axes[i].set_title(f"Aspek {aspek}")
                         else:
                             axes[i].pie([1], labels=["Tidak Ada Data"], colors=["#d3d3d3"])
                             axes[i].set_title(f"Aspek {aspek}")
-                    
+    
                     st.pyplot(fig)
+    
+            except Exception as e:
+                st.error(f"Terjadi kesalahan: {e}")
 
 
 
