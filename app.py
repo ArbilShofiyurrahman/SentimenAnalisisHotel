@@ -443,27 +443,24 @@ def main():
                 st.error(f"Terjadi kesalahan: {e}")
 
 
-
-
-    
-                    # Menampilkan DataFrame hasil prediksi
-                    st.subheader("Hasil Analisis")
-                    st.dataframe(df)
-    
-                    # Download hasil
-                    output = BytesIO()
-                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                        df.to_excel(writer, index=False, sheet_name='Hasil Prediksi')
-                    output.seek(0)
-    
-                    st.download_button(
-                        label="📥 Download Hasil Lengkap (Excel)",
-                        data=output,
-                        file_name="hasil_analisis_file.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
-            except Exception as e:
-                st.error(f"Terjadi kesalahan saat memproses file: {e}")
+                        # Menampilkan DataFrame hasil prediksi
+                        st.subheader("Hasil Analisis")
+                        st.dataframe(df)
+        
+                        # Download hasil
+                        output = BytesIO()
+                        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                            df.to_excel(writer, index=False, sheet_name='Hasil Prediksi')
+                        output.seek(0)
+        
+                        st.download_button(
+                            label="📥 Download Hasil Lengkap (Excel)",
+                            data=output,
+                            file_name="hasil_analisis_file.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                except Exception as e:
+                    st.error(f"Terjadi kesalahan saat memproses file: {e}")
 
 
 
