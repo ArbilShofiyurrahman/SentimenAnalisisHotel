@@ -436,15 +436,7 @@ def main():
                                 predicted_sentiment = "-"
     
                             df.at[index, "Sentimen"] = predicted_sentiment
-    
-                    # Menampilkan Dataframe sebelum dan sesudah preprocessing
-                    st.subheader("Data Asli dan Hasil Preprocessing")
-                    st.dataframe(df[["ulasan", "Ulasan_Preprocessed"]])
-    
-                    # Menampilkan hasil analisis
-                    st.subheader("Hasil Analisis Aspek & Sentimen")
-                    st.dataframe(df[["ulasan", "Ulasan_Preprocessed", "Aspek", "Sentimen"]])
-    
+
                     # Visualisasi Sentimen
                     st.subheader("Visualisasi Sentimen Pada Setiap Aspek")
                     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
@@ -468,6 +460,13 @@ def main():
                             axes[i].set_title(f"Aspek {aspek}")
     
                     st.pyplot(fig)
+                    # Menampilkan Dataframe sebelum dan sesudah preprocessing
+                    st.subheader("Data Asli dan Hasil Preprocessing")
+                    st.dataframe(df[["ulasan", "Ulasan_Preprocessed"]])
+    
+                    # Menampilkan hasil analisis
+                    st.subheader("Hasil Analisis Aspek & Sentimen")
+                    st.dataframe(df[["ulasan", "Ulasan_Preprocessed", "Aspek", "Sentimen"]])
     
                     # Download hasil analisis
                     output = BytesIO()
