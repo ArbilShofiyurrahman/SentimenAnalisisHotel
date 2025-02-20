@@ -459,8 +459,8 @@ def main():
                     file_name="hasil_analisis_file.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
-        except Exception as e:
-            st.error(f"Terjadi kesalahan saat memproses file: {e}")
+            except Exception as e:
+                st.error(f"Terjadi kesalahan saat memproses file: {e}")
 
 
 
