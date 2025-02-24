@@ -321,13 +321,8 @@ except Exception as e:
     st.error(f"Gagal memuat model atau vektorizer: {e}")
     st.stop()
 
-
-
-def predict_sentiment(text):
-    """Prediksi sentimen berdasarkan aspek yang diprediksi."""
-    aspect = predict_aspect(text)  # Step prediksi aspek
-
-    # Pilih TF-IDF dan model berdasarkan aspek yang diprediksi
+def predict_sentiment(text, aspect):
+    # Select appropriate model and vectorizer based on aspect
     if aspect == "Fasilitas":
         vectorizer = tfidf_fasilitas
         model = rf_fasilitas_model
@@ -338,9 +333,9 @@ def predict_sentiment(text):
         vectorizer = tfidf_masakan
         model = rf_masakan_model
     else:
-        return "-", "-"
-
-    # Transformasi teks dan prediksi sentimen
+        return "-"
+    
+    # Transform text and predict
     text_vectorized = vectorizer.transform([text])
     sentiment = model.predict(text_vectorized)[0]
     return sentiment.capitalize()
