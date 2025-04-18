@@ -495,5 +495,5 @@ def main():
     Teknologi yang Digunakan: Python, Scikit-learn, TF-IDF, Random Forest.
     """)
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
