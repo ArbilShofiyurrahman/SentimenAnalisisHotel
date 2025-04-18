@@ -363,7 +363,7 @@ def main():
     """)
 
     # Menyediakan menu/tab untuk input teks atau file
-      tab1, tab2 = st.tabs(["📝 Input Manual", "📂 Upload File"]
+    tab1, tab2 = st.tabs(["📝 Input Manual", "📂 Upload File"]
 
     with tab1:
         st.subheader("Input Ulasan Hotel")
